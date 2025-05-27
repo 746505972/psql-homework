@@ -28,8 +28,8 @@ def interactive_shell():
         'CREATE', 'DROP', 'ALTER', 'JOIN', 'GROUP BY', 'ORDER BY',
         'LIMIT', 'AND', 'OR', 'NOT', 'IN', 'LIKE', 'BETWEEN','energy_consumption',
         'automation_rules','user_feedback','security_events','usage_logs','device_status_history',
-        'devices','rooms','user_home_assignments','homes','users','exit;','quit;','reset_config;','reset;',
-        '_init;','/l;','reset_demo;'
+        'devices','rooms','user_home_assignments','homes','users','exit;','quit;','/reset_config;','/reset;',
+        '/_init;','/l;','/reset_demo;'
     ], ignore_case=True)
 
     session = PromptSession(
@@ -42,37 +42,55 @@ def interactive_shell():
     while True:
         try:
             user_input = session.prompt('SQL> ')
-            if user_input.lower().strip(';') in ('exit', 'quit'):
+            raw = user_input.strip()
+
+            # 判断是否退出（支持 exit; 或 quit;，中英文分号）
+            if raw.lower().rstrip(';；') in ('exit', 'quit'):
                 break
-            if user_input.strip().endswith(';'):
-                sql = user_input.rstrip(';').strip()
-                if sql.lower() in "reset_demo":
-                    from commands.reset import run_reset_with_schema
-                    run_reset_with_schema()
-                elif sql.lower() == 'reset':
-                    from commands.reset import run_reset
-                    run_reset()
-                elif sql.lower() in ('_init', '/l'):
-                    from commands.db_init import run_init_check
-                    run_init_check()
-                elif sql.lower() == 'config_reset' or sql.lower() == 'reset_config':
-                    from commands.config import reset_config
-                    reset_config()
-                elif sql.startswith('?') or sql.startswith('？'):
+
+            # 检查是否以中英文分号结尾
+            if raw.endswith(';') or raw.endswith('；'):
+                # 去除结尾分号和两端空格
+                command = raw.rstrip(';；').strip()
+
+                # 处理：以 / 开头的特殊命令
+                if command.startswith('/'):
+                    cmd = command.lower()
+                    if cmd == '/reset_demo':
+                        from commands.reset import run_reset_with_schema
+                        run_reset_with_schema()
+                    elif cmd == '/reset':
+                        from commands.reset import run_reset
+                        run_reset()
+                    elif cmd in ('/_init', '/l'):
+                        from commands.db_init import run_init_check
+                        run_init_check()
+                    elif cmd in ('/config_reset', '/reset_config'):
+                        from commands.config import reset_config
+                        reset_config()
+                    else:
+                        print(f"[yellow]未知命令：{cmd}[/yellow]")
+
+                # 处理：自然语言命令
+                elif command.startswith('?') or command.startswith('？'):
                     from commands.nlp_query import run_nlp_query
-                    question = sql[1:].strip()
+                    question = command[1:].strip()
                     run_nlp_query(question)
+
+                # 处理：SQL 正常语句
                 else:
-                    run_query(sql)
+                    run_query(command)
+
             else:
-                print("提示: SQL语句应以分号(;)结尾。请继续输入或输入'exit'退出")
+                print("[yellow]提示: SQL语句应以英文或中文分号结尾（; 或 ；）。输入'exit;'退出。[/yellow]")
+
         except KeyboardInterrupt:
             continue
         except EOFError:
             break
         except Exception as e:
-            print(f"错误: {e}")
-            break
+            print(f"[red]错误: {e}[/red]")
+
 
 if __name__ == "__main__":
     interactive_shell()
