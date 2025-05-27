@@ -1,0 +1,9 @@
+graphviz==0.20.3
+openai==1.82.0
+prompt_toolkit==3.0.48
+prompt_toolkit==3.0.50
+prompt_toolkit==3.0.43
+psycopg2==2.9.10
+rich==14.0.0
+sqlparse==0.5.3
+typer==0.16.0
