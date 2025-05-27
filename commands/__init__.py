@@ -1,13 +1,19 @@
-from .db_init import init_db
-from .query import execute_query
+from .db_init import run_init_check
+from .query import run_query
 from .validate import check_query
 from .visualize import visualize_query
-from .reset import reset_db
+from .reset import run_reset
+from .config import load_config, setup_config, reset_config
+from .nlp_query import run_nlp_query
 
 __all__ = [
-    'init_db',
-    'execute_query',
+    'run_init_check',
+    'run_query',
     'check_query',
     'visualize_query',
-    'reset_db'
+    'run_reset',
+    'load_config',
+    'setup_config',
+    'reset_config',
+    'run_nlp_query'
 ]
