@@ -107,5 +107,5 @@
 
 ## 📄 License
 
-MIT License © 2025
+[MIT License © 2025](https://github.com/746505972/psql-homework/blob/main/LICENSE)
 
