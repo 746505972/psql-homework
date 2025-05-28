@@ -2,10 +2,13 @@
 # config.py
 import os
 import json
+from psycopg2 import OperationalError
+import psycopg2
 from rich import print
 import getpass
 from rich.panel import Panel
 
+os.environ["PYTHONIOENCODING"] = "utf-8"
 CONFIG_PATH = "config.json"
 
 DEFAULT_CONFIG = {
@@ -36,8 +39,11 @@ def show_help():
 [bold bright_blue]退出方式：[/bold bright_blue]
 - 输入 [bold]exit;[/bold] 或 [bold]quit;[/bold] 即可退出
 
+[bold cyan]更多信息请：[/bold cyan]
+[link=https://github.com/Liu-Z-C/psql-homework][bold cyan]跳转至GitHub仓库[/bold cyan][/link]
+
 [bright_red]祝你使用愉快！[/bright_red]"""
-    print(Panel(help_text, title="使用帮助", subtitle="你可以随时输入 /help 查看"))
+    print(Panel(help_text, title="使用帮助", subtitle="你可以随时输入 /help; 查看"))
 
 def config_exists():
     return os.path.exists(CONFIG_PATH) and os.path.getsize(CONFIG_PATH) > 0
@@ -51,10 +57,14 @@ def load_config(verbose: bool = False):
                 if 'password' in safe_config:
                     safe_config['password'] = '****'
                 print(f"[bright_green]已加载数据库配置：{safe_config}[/bright_green]")
+
+            # ✅ 测试连接有效性
+            test_db_connection(config)
             return config
     else:
-        return setup_config()
-
+        config = setup_config()
+        test_db_connection(config)  # 同样测试首次配置
+        return config
 
 def setup_config():
     print("[bright_yellow]首次使用，请输入数据库连接信息：[/bright_yellow]")
@@ -76,3 +86,31 @@ def reset_config():
         os.remove(CONFIG_PATH)
     print("[red]配置已清除，请重新设置连接信息。[/red]")
     return setup_config()
+
+def test_db_connection(config: dict, verbose: bool = False) -> bool:
+    try:
+        conn = psycopg2.connect(**config)
+        conn.close()
+        if verbose:
+            print("[bright_green]✓ 数据库连接成功[/bright_green]")
+        return True
+
+    except Exception as e:  # 不仅捕获 psycopg2 的 OperationalError
+        if verbose:
+            print(f"[red]✗ 无法连接数据库：{e}[/red]")
+
+            msg = str(e).lower()
+            if "does not exist" in msg:
+                print("[yellow]可能原因：数据库不存在，请确认 database 名。[/yellow]")
+            elif ("authentication failed"in msg) or ("no password supplied"in msg):
+                print("[yellow]可能原因：用户名或密码错误。[/yellow]")
+            elif "connection refused" in msg:
+                print("[yellow]可能原因：数据库未启动或端口错误。[/yellow]")
+            elif "timeout expired" in msg:
+                print("[yellow]可能原因：连接超时，检查网络或主机地址。[/yellow]")
+            elif "codec can't decode" in msg:
+                print("[yellow]可能原因：编码错误/数据库不存在[/yellow]")
+            else:
+                print("[yellow]未知错误，请检查连接参数和服务器设置。[/yellow]")
+
+        return False

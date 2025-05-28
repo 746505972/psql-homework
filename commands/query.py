@@ -6,14 +6,11 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
-from commands.config import load_config
 from commands.validate import get_ai_analysis
 
 console = Console()
-# 加载持久化的数据库配置
-db_config = load_config()
 
-def run_query(sql: str):
+def run_query(sql: str,db_config: dict):
     try:
         print("[blue]正在连接数据库...[/blue]")
         conn = psycopg2.connect(**db_config)
