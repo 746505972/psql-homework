@@ -2,20 +2,18 @@
 from rich import print
 import psycopg2
 from psycopg2 import Error
-from commands.config import load_config
 import os
 
-db_config = load_config()
 
-def run_reset():
+def run_reset(db_config):
     """只重置数据库（删除并重建）"""
-    _reset_db(restore_schema=False)
+    _reset_db(db_config,restore_schema=False)
 
-def run_reset_with_schema():
+def run_reset_with_schema(db_config):
     """重置数据库后自动导入 schema.sql"""
-    _reset_db(restore_schema=True)
+    _reset_db(db_config,restore_schema=True)
 
-def _reset_db(restore_schema: bool):
+def _reset_db(db_config,restore_schema: bool):
     try:
         print(f"[blue]正在连接到 postgres 数据库以重置目标库 {db_config['database']}...[/blue]")
         conn = psycopg2.connect(
@@ -50,9 +48,9 @@ def _reset_db(restore_schema: bool):
 
     # 可选：导入 schema.sql
     if restore_schema:
-        _import_schema_sql()
+        _import_schema_sql(db_config)
 
-def _import_schema_sql():
+def _import_schema_sql(db_config):
     try:
         print("[blue]正在导入 schema.sql 文件...[/blue]")
 

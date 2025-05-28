@@ -2,8 +2,9 @@ from .db_init import run_init_check
 from .query import run_query
 from .validate import get_ai_analysis
 from .reset import run_reset
-from .config import load_config, setup_config, reset_config
+from .config import load_config, setup_config, reset_config,test_db_connection
 from .nlp_query import run_nlp_query
+from .completion import SQLSmartCompleter
 
 __all__ = [
     'run_init_check',
@@ -13,5 +14,7 @@ __all__ = [
     'load_config',
     'setup_config',
     'reset_config',
-    'run_nlp_query'
+    'test_db_connection',
+    'run_nlp_query',
+    'SQLSmartCompleter'
 ]

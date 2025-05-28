@@ -1,17 +1,17 @@
 # nlp_query.py
-from rich import print
-from rich.panel import Panel
-from rich.box import SIMPLE
-from rich.table import Table
-from rich.console import Console
-import sqlparse
-import psycopg2
-from psycopg2 import Error
 import json
 import os
 
+import psycopg2
+import sqlparse
 from openai import OpenAI
-from commands.config import load_config
+from psycopg2 import Error
+from rich import print
+from rich.box import SIMPLE
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
+
 
 def read_schema_sql() -> str:
     try:
@@ -66,9 +66,8 @@ def get_sql_from_text(question: str) -> str:
         return f"转换失败: {str(e)}"
 
 
-def run_nlp_query(question: str):
+def run_nlp_query(question: str,db_config: dict):
     """适用于交互模式的自然语言查询"""
-    db_config = load_config()
     sql_query = get_sql_from_text(question)
 
     if sql_query.startswith("转换失败"):

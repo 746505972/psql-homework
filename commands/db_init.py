@@ -1,12 +1,9 @@
 # db_init.py
-from rich import print
 import psycopg2
 from psycopg2 import Error
-from commands.config import load_config
+from rich import print
 
-db_config = load_config()
-
-def run_init_check():
+def run_init_check(db_config):
     """列出数据库中的所有表及其记录数"""
     try:
         print(f"[blue]正在连接到数据库 {db_config['database']}...[/blue]")
