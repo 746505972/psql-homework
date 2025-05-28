@@ -3,6 +3,8 @@
 import os
 import json
 from rich import print
+import getpass
+from rich.panel import Panel
 
 CONFIG_PATH = "config.json"
 
@@ -14,30 +16,59 @@ DEFAULT_CONFIG = {
     "database": "project2025"
 }
 
+def show_help():
+    help_text = """[bold bright_cyan]欢迎使用 SQL 交互式查询工具！[/bold bright_cyan]
+
+[bold bright_green]基本用法：[/bold bright_green]
+- 输入标准 SQL 语句（以分号结尾）执行查询，例如：
+  [bright_white on bright_black]SELECT * FROM users;[/bright_white on bright_black]
+
+- 输入自然语言提问（以问号开头），自动生成 SQL 并执行：
+  [bright_white on bright_black]? 查询所有用户的姓名和邮箱；[/bright_white on bright_black]
+
+[bold bright_magenta]特殊指令（以 / 开头）：[/bold bright_magenta]
+- [bold]/reset;[/bold]         重置数据库（清空数据但保留关系）
+- [bold]/reset_demo;[/bold]   重置数据库并导入 schema.sql 示例结构
+- [bold]/_init;[/bold] 或 [bold]/l;[/bold]   查看当前数据库中的所有表及记录数
+- [bold]/config_reset;[/bold]  重新设置数据库连接配置
+- [bold]/help;[/bold]          显示本帮助信息
+
+[bold bright_blue]退出方式：[/bold bright_blue]
+- 输入 [bold]exit;[/bold] 或 [bold]quit;[/bold] 即可退出
+
+[bright_red]祝你使用愉快！[/bright_red]"""
+    print(Panel(help_text, title="使用帮助", subtitle="你可以随时输入 /help 查看"))
+
 def config_exists():
     return os.path.exists(CONFIG_PATH) and os.path.getsize(CONFIG_PATH) > 0
 
-def load_config(verbose:bool=False):
+def load_config(verbose: bool = False):
     if config_exists():
         with open(CONFIG_PATH, "r", encoding="utf-8") as f:
             config = json.load(f)
-            print(f"[bright_green]已加载数据库配置：{config}[/bright_green]") if verbose else None
+            if verbose:
+                safe_config = config.copy()
+                if 'password' in safe_config:
+                    safe_config['password'] = '****'
+                print(f"[bright_green]已加载数据库配置：{safe_config}[/bright_green]")
             return config
     else:
         return setup_config()
 
+
 def setup_config():
-    print("[yellow]首次使用，请输入数据库连接信息：[/yellow]")
+    print("[bright_yellow]首次使用，请输入数据库连接信息：[/bright_yellow]")
     config = {}
     config["host"] = input("数据库主机地址 [localhost]: ") or "localhost"
     config["port"] = int(input("数据库端口 [5432]: ") or "5432")
     config["user"] = input("数据库用户名 [postgres]: ") or "postgres"
-    config["password"] = input("数据库密码: ")
+    config["password"] = getpass.getpass("数据库密码: ")
     config["database"] = input("数据库名 [project2025]: ") or "project2025"
 
     with open(CONFIG_PATH, "w", encoding="utf-8") as f:
         json.dump(config, f, indent=4)
         print("[bright_green]配置已保存到 config.json[/bright_green]")
+    show_help()
     return config
 
 def reset_config():

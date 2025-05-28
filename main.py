@@ -9,6 +9,8 @@ from prompt_toolkit.history import FileHistory
 from rich import print
 
 from commands import run_query, load_config
+from commands.config import show_help
+
 
 @Condition
 def custom_is_multiline() -> bool:
@@ -19,17 +21,18 @@ def custom_is_multiline() -> bool:
 def interactive_shell():
     print("[bright_red]SQL交互式控制台 (输入[bright_yellow]exit[/bright_yellow]退出)[/bright_red]")
     print("[bright_red]输入SQL语句并以分号([bright_yellow];[/bright_yellow])结尾，然后按回车执行[/bright_red]")
+    print("[bright_red]以问号开头输入自然语言[/bright_red]")
 
     # 提示数据库参数
     load_config(verbose=True)
 
     sql_completer = WordCompleter([
         'SELECT', 'FROM', 'WHERE', 'INSERT', 'UPDATE', 'DELETE',
-        'CREATE', 'DROP', 'ALTER', 'JOIN', 'GROUP BY', 'ORDER BY',
-        'LIMIT', 'AND', 'OR', 'NOT', 'IN', 'LIKE', 'BETWEEN','energy_consumption',
-        'automation_rules','user_feedback','security_events','usage_logs','device_status_history',
-        'devices','rooms','user_home_assignments','homes','users','exit;','quit;','/reset_config;','/reset;',
-        '/_init;','/l;','/reset_demo;'
+        'CREATE', 'DROP', 'ALTER', 'JOIN','NATURAL JOIN', 'GROUP BY', 'ORDER BY',
+        'LIMIT', 'AND', 'OR', 'NOT', 'IN', 'LIKE', 'BETWEEN','LANGUAGE','HAVING',
+        'energy_consumption','automation_rules','user_feedback','security_events','usage_logs',
+        'device_status_history','devices','rooms','user_home_assignments','homes','users',
+        'exit;','quit;','/reset_config;','/reset;','/_init;','/l;','/reset_demo;','/h;','/help;'
     ], ignore_case=True)
 
     session = PromptSession(
@@ -68,6 +71,8 @@ def interactive_shell():
                     elif cmd in ('/config_reset', '/reset_config'):
                         from commands.config import reset_config
                         reset_config()
+                    elif cmd in ('/h', '/help'):
+                        show_help()
                     else:
                         print(f"[yellow]未知命令：{cmd}[/yellow]")
 

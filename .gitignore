@@ -1,1 +1,6 @@
 config.json
+.sql_history
+build/
+*.spec
+*.pyc
+__pycache__/
