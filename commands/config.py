@@ -34,6 +34,8 @@ def show_help():
 - [bold]/reset_demo;[/bold]   重置数据库并导入 schema.sql 示例结构
 - [bold]/_init;[/bold] 或 [bold]/l;[/bold]   查看当前数据库中的所有表及记录数
 - [bold]/config_reset;[/bold]  重新设置数据库连接配置
+- [bold]/status;[/bold]        查看当前数据库连接状态
+- [bold]/schema;[/bold]        查看当前数据库结构
 - [bold]/help;[/bold]          显示本帮助信息
 
 [bold bright_blue]退出方式：[/bold bright_blue]
