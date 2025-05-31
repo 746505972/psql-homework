@@ -14,7 +14,7 @@ class SQLSmartCompleter(Completer):
         self.meta_commands = [
             '/reset;', '/reset_demo;', '/l;', '/_init;',
             '/reset_config;', '/config_reset;', '/help;','/h;',
-            '/test;', '/status;', 'exit;', 'quit;'
+            '/test;', '/status;', 'exit;', 'quit;','/schema;'
         ]
 
         self.table_names = []

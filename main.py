@@ -5,6 +5,7 @@ from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.document import Document
 from prompt_toolkit.filters import Condition
 from prompt_toolkit.history import FileHistory
+from prompt_toolkit.formatted_text import HTML
 from rich import print
 
 from commands import run_query, load_config, test_db_connection
@@ -40,7 +41,8 @@ def interactive_shell():
 
     while True:
         try:
-            user_input = session.prompt('SQL> ')
+            prompt_color = 'ansimagenta' if config_valid else 'ansired'
+            user_input = session.prompt(HTML(f'<{prompt_color}><b>SQL>>></b></{prompt_color}> '))
             raw = user_input.strip()
 
             if raw.lower().rstrip('；;') in ('exit', 'quit'):
@@ -73,10 +75,25 @@ def interactive_shell():
                         else:
                             print("[red]数据库配置无效，请先使用 /config_reset 修复[/red]")
 
+                    elif cmd == '/schema':
+                        if config_valid:
+                            from commands.schema_info import get_schema_from_db
+                            schema = get_schema_from_db(config, styled=True)
+                            print(f"[green]当前数据库结构:\n{schema}[/green]")
+                        else:
+                            print("[red]数据库配置无效，请先使用 /config_reset 修复[/red]")
+
                     elif cmd in ('/config_reset', '/reset_config'):
                         from commands.config import reset_config
                         config = reset_config()
                         config_valid = test_db_connection(config, verbose=True)
+                        
+                    elif cmd == '/status':
+                        """判断当前离线/在线"""
+                        if config_valid:
+                            print("[green]当前数据库配置有效，连接正常。[/green]")
+                        else:
+                            print("[red]当前数据库配置无效，连接失败。[/red]")
 
                     elif cmd in ('/h', '/help'):
                         show_help()

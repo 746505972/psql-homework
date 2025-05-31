@@ -5,6 +5,7 @@ from .reset import run_reset
 from .config import load_config, setup_config, reset_config,test_db_connection
 from .nlp_query import run_nlp_query
 from .completion import SQLSmartCompleter
+from .schema_info import get_schema_from_db
 
 __all__ = [
     'run_init_check',
@@ -16,5 +17,6 @@ __all__ = [
     'reset_config',
     'test_db_connection',
     'run_nlp_query',
-    'SQLSmartCompleter'
+    'SQLSmartCompleter',
+    'get_schema_from_db'
 ]

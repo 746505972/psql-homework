@@ -1,7 +1,6 @@
 # nlp_query.py
 import json
-import os
-
+from commands.schema_info import get_schema_from_db
 import psycopg2
 import sqlparse
 from openai import OpenAI
@@ -12,20 +11,9 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
-
-def read_schema_sql() -> str:
-    try:
-        current_dir = os.path.abspath(os.getcwd())
-        schema_path = os.path.join(current_dir, 'schema.sql')
-        with open(schema_path, 'r', encoding='utf-8') as f:
-            return f.read()
-    except Exception as e:
-        return f"无法读取schema.sql: {str(e)}"
-
-
 console = Console()
 
-def get_sql_from_text(question: str) -> str:
+def get_sql_from_text(question: str, config: dict) -> str:
     """使用通义千问将自然语言转换为SQL查询"""
     try:
         client = OpenAI(
@@ -34,7 +22,8 @@ def get_sql_from_text(question: str) -> str:
         )
 
         # 读取数据库结构
-        schema = read_schema_sql()
+        schema = get_schema_from_db(config, styled=False)
+
         prompt = f"""作为SQL专家，请根据以下数据库结构和自然语言描述生成PostgreSQL查询语句：
 
 数据库结构：
@@ -66,9 +55,9 @@ def get_sql_from_text(question: str) -> str:
         return f"转换失败: {str(e)}"
 
 
-def run_nlp_query(question: str,db_config: dict):
+def run_nlp_query(question: str, db_config: dict):
     """适用于交互模式的自然语言查询"""
-    sql_query = get_sql_from_text(question)
+    sql_query = get_sql_from_text(question, db_config)
 
     if sql_query.startswith("转换失败"):
         print(f"[red]{sql_query}[/red]")
