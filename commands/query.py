@@ -29,8 +29,7 @@ def run_query(sql: str, db_config: dict):
 
             table.add_column("")  # 添加无标题的索引列
             for column in column_names:
-                table.add_column(f"[bold bright_cyan]{column}[/bold bright_cyan]", style="white")
-
+                table.add_column(f"[bold bright_cyan]{column}[/bold bright_cyan]", style="white", overflow="fold")
             for idx, row in enumerate(results, start=1):
                 row_data = [str(value) if value is not None else '' for value in row]
                 table.add_row(str(idx), *row_data)  # 将索引作为首列
@@ -41,13 +40,14 @@ def run_query(sql: str, db_config: dict):
             print("[yellow]查询执行成功，但没有返回结果。[/yellow]")
 
         # 添加 EXPLAIN ANALYZE 分析
-        try:
-            explain_sql = f"EXPLAIN ANALYZE {sql}"
-            cursor.execute(explain_sql)
-            plan = cursor.fetchall()
-            explain_text = "\n".join([row[0] for row in plan])
-
-            console.print(Panel(explain_text, title="EXPLAIN ANALYZE"))
+        try:           
+            if not sql.strip().lower().startswith("explain"):
+                explain_sql = f"EXPLAIN ANALYZE {sql}"
+                cursor.execute(explain_sql)
+                plan = cursor.fetchall()
+                explain_text = "\n".join([row[0] for row in plan])
+                
+                console.print(Panel(explain_text, title="EXPLAIN ANALYZE"))
 
         except Exception as explain_err:
             print(f"[yellow]EXPLAIN ANALYZE 执行失败: {explain_err}[/yellow]")

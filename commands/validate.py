@@ -16,26 +16,26 @@ def get_ai_analysis(query: str, error_msg: Optional[str] = None) -> str:
         if error_msg:
             prompt = f"""作为SQL命令行工具内置AI助手，请分析以下SQL查询的错误并提供修正建议：
             
-SQL查询: {query}
-错误信息: {error_msg}
+            SQL查询: {query}
+            错误信息: {error_msg}
 
-请做到简洁的回复：
-1. 错误原因的分析
-2. 具体的修正建议
-3. 正确的SQL示例
+            请做到简洁的回复：
+            1. 错误原因的分析
+            2. 具体的修正建议
+            3. 正确的SQL示例
 
-请用通俗易懂的中文回答。"""
+            请用通俗易懂的中文回答。"""
         else:
             prompt = f"""作为SQL命令行工具内置AI助手，请分析以下SQL查询的结构并提供优化建议：
             
-SQL查询: {query}
+            SQL查询: {query}
 
-请提供：
-1. 查询结构分析
-2. 性能优化建议
-3. 可能的改进示例
-4.不要写总结
-请用通俗易懂的中文回答。"""
+            请提供：
+            1. 查询结构分析
+            2. 性能优化建议
+            3. 可能的改进示例
+            4.不要写总结
+            请用通俗易懂的中文回答。"""
 
         completion = client.chat.completions.create(
             model="qwen-turbo-latest",
