@@ -26,17 +26,17 @@ def get_sql_from_text(question: str, config: dict) -> str:
 
         prompt = f"""作为SQL专家，请根据以下数据库结构和自然语言描述生成PostgreSQL查询语句：
 
-数据库结构：
-{schema}
+        数据库结构：
+        {schema}
 
-问题描述: {question}
+        问题描述: {question}
 
-请：
-1. 只返回一个完整的SQL查询语句
-2. 不要包含任何解释或说明
-3. 确保SQL语法正确
-4. 使用标准的PostgreSQL语法
-5. 只使用schema.sql中定义的表和列名"""
+        请：
+        1. 只返回一个完整的SQL查询语句
+        2. 不要包含任何解释或说明
+        3. 确保SQL语法正确
+        4. 使用标准的PostgreSQL语法
+        5. 只使用schema.sql中定义的表和列名"""
 
         # 显示等待提示动画
         with console.status("[bright_cyan]正在等待大模型生成 SQL，请稍候...[/bright_cyan]", spinner="dots"):
