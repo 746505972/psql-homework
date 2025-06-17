@@ -1,4 +1,4 @@
-# SQL 交互式查询工具
+# SQL 交互式查询工具 [![Python 3.13](https://img.shields.io/badge/Python-3.13-blue.svg?logo=python&logoColor=white)](https://www.python.org/downloads/release/python-3130/)
 
 一个基于 Python 的终端 SQL 交互系统，支持：
 
@@ -6,7 +6,7 @@
 - [x] 简单的自动补全
 - [x] 使用自然语言生成 SQL 查询（集成通义千问）
 - [x] 快速查看数据库结构、重置数据库
-- [x] 含打包的 `exe` 文件，双击即可运行
+- [x] 含打包的可执行文件，双击即可运行
 
 ---
 
@@ -30,9 +30,9 @@
 
 ---
 
-### ✅ 方式二：使用打包好的 `.exe`
+### ✅ 方式二：使用打包好的程序
 
-1. 找到已打包的 `pgtool.exe`
+1. 在`Release`中找到已打包的 `pgtool`
 
 2. 双击运行，进入交互界面
 
@@ -99,7 +99,6 @@
 
 ## 🧱 技术栈
 
-* Python 3.10+
 * prompt\_toolkit
 * rich
 * psycopg2
