@@ -1,0 +1,50 @@
+name: Cross-platform build and release
+
+on:
+  release:
+    types: [created]  # 仅在发布 Release 时触发
+
+jobs:
+  build-linux-mac:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.13
+
+    - name: Install PyInstaller
+      run: pip install pyinstaller
+
+    - name: Build executable with PyInstaller
+      run: |
+        pyinstaller main.py --onefile --name pgtool
+
+    - name: Upload build artifact
+      uses: softprops/action-gh-release@v1
+      with:
+        files: dist/pgtool*
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  upload-windows:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Upload existing Windows build
+      uses: softprops/action-gh-release@v1
+      with:
+        files: pgtool-windows-amd64/pgtool.exe
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
